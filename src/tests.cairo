@@ -65,7 +65,6 @@ fn deploy() -> (ITestContractDispatcher, IStorageReadDispatcher) {
     (ITestContractDispatcher { contract_address }, IStorageReadDispatcher { contract_address })
 }
 
-
 #[test]
 #[available_gas(2000000)]
 fn test_simple() {
@@ -77,12 +76,20 @@ fn test_simple() {
     assert(before == 0, 'unexpected initial value');
     contract.write_simple('example');
     let after = reader.storage_read(0, addr);
-    assert(before == 'example', 'unexpected final value');
+    assert(after == 'example', 'unexpected final value');
 }
 
 
 #[test]
 #[available_gas(2000000)]
 fn test_mapping() {
-
+    let (contract, reader) = deploy();
+    let addr = 0x07436b353dfa1ef3a8652d368b0a6373f3f085988fa9db3543ba4b9a36c44612
+        .try_into()
+        .unwrap();
+    let before = reader.storage_read(0, addr);
+    assert(before == 0, 'unexpected initial value');
+    contract.write_mapping(1, 'example2');
+    let after = reader.storage_read(0, addr);
+    assert(after == 'example2', 'unexpected final value');
 }
